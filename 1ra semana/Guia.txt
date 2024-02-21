@@ -1,0 +1,352 @@
+1- Entity
+
+LRM §1.1.
+An entity defines the interface between a design and the outside world.
+
+Syntax:
+entity entity_name is 
+  [ generic ( generic_list ); ] 
+  [ port ( port_list ); ]
+  [ entity_declarations ]
+[ begin
+  concurrent_statements ]
+end [ entity ] [ entity_name ]; 
+Description:
+An entity is used in combination with an architecture. 
+Together they describe the behaviour or structure of an hierarchical block of hardware (a design entity).
+ The architecture can be assigned to one entity only but one entity may be assigned to multiple architectures.
+
+The entity declares the design name. In addition, 
+it defines generics which provide static information (like timing parameters or bus width) to a design, 
+and ports which provide communication channels between the design and its environment.
+
+The entity declaration may be preceded by the library and use clauses. 
+This way all declarations defined in a package will be visible for the entity and all architectures assigned to it.
+
+Example:
+library ieee;
+use ieee.std_logic_1164.all;
+  
+entity BCD_Decoder is
+  generic (Size: integer := 4);
+  port (BCD: in std_logic_vector(2 downto 0);
+        Enable: in std_logic;
+        LED: out std_ulogic_vector (Size-1 downto 0)); 
+  constant Zero: std_ulogic_vector(Size-1 downto 0) := (others => '0');
+begin
+  assert (BCD /= "111") report "BCD is 7" severity note;
+end BCD_Decoder;
+Notes:
+The LRM uses the name design entity for a complete specification of the design, 
+i.e. both its interface (entity unit) and behaviour or structure (architecture unit). 
+Therefore entity and design entity are not the same concepts!
+It is possible to write an entity without any generics, ports and statements.
+ In fact this is used in constructing testbenches.
+===================================================================================================================
+2-Architecture
+
+LRM §1.2.
+An architecture defines the internal organization or operation, i.e. describes the behaviour, data flow, 
+or structure, of an associated entity.
+
+Syntax:
+architecture architecture_name of entity_name is
+  [ architecture_declarations ]
+begin 
+  concurrent_statements
+end [ architecture ] [ architecture_name ]; 
+Description:
+An architecture defines the internal view of a block of hardware, i.e. the functionality, behaviour or structure of the hardware. 
+An architecture is assigned to an entity which defines the interface.
+
+An entity can have multiple alternative architectures assigned to it. 
+All the architectures assigned to the same entity must have different names,
+ but architectures assigned to different entities can have the same name.
+
+Example:
+architecture Test of TbDff is 
+  signal Clk, D, Q: std_logic := '0'; 
+  component Dff 
+    port(Clk, D: in std_logic; Q: out std_logic); 
+  end component; 
+begin 
+  uut : Dff port map (Clk => Clk, D => D, Q => Q);
+  Clk <= not (Clk) after 25 ns;
+  stimulus : process
+  begin
+    wait for 50 ns;
+	D <= '1';
+    wait for 100 ns;
+	D <= '0';
+    wait for 50 ns;
+  end process stimulus;
+end Test; 
+=========================================================================================================================
+3-Configuration Declaration
+
+LRM §1.3.
+A configuration is a construct that defines how the design hierarchy is linked together.
+
+Syntax:
+configuration configuration_name of entity_name is
+  [ configuration_declarations ]
+  for architecture_name
+    [ configuration_item ]
+  end for;
+end [ configuration ] [ configuration_name ];
+
+configuration_item = for instance_label : component_name
+                       [ use_item
+                         [ generic_map ]
+                         [ port_map ]; ]
+                       [ configuration_item ]
+                     end for;
+
+use_item = entity [ library_name. ] entity_name [ ( architecture_name ) ] |
+           configuration [ library_name. ] configuration_name 
+Description:
+A configuration declaration defines how the design hierarchy is linked together during elaboration,
+by listing the entities and architectures used in place of each component instantiation within an architecture.
+
+A simple configuration contains reference to only one architecture body. Hierarchical configurations allow to nest configurations.
+This mechanism allows binding component instantiations with the design entities down the hierarchy.
+
+When the ports and generics in the component declaration are not equal to their counterparts in the entity declaration,
+one can use an explicit notification on how the ports and generics in the entity should be bound to ports and generics
+of the component instance. The generic map and port map are used for this purpose.
+
+Example:
+-- an architecture of a microprocessor 
+architecture Structure of MicroProcessor is 
+  component ALU port (...); end component; 
+  component MUX port (...); end component; 
+  component LATCH port (...); end component; 
+begin 
+  A1: ALU port map(...); 
+  M1: MUX port map(...); 
+  M2: MUX port map(...); 
+  M3: MUX port map(...); 
+  L1: LTACH port map(...); 
+  L2: LATCH port map(...); 
+end Structure;
+  
+-- a configuration of the microprocessor
+library TTL, work; 
+use TTL.all;
+use work.all; 
+configuration Cfg4 of MicroProcessor is 
+  for Structure 
+    for A1: ALU 
+      use configuration TTL.SN74LS181; 
+    end for; 
+    for M1, M2, M3: MUX 
+      use entity Multiplex4(behavior); 
+    end for; 
+    for all: LATCH 
+      use entity Work.Latch; 
+    end for;
+  end for; 
+end configuration Cfg4;
+=========================================================================================================================
+4-Configuration Specification
+
+LRM §5.2.
+A configuration specification is a construct that defines which entity and architecture is used in place of the
+instances of a single component during elaboration.
+
+Syntax:
+for instance_label : component_name
+  use use_item
+    [ generic_map ]
+    [ port_map ];
+
+use_item = entity [ library_name. ] entity_name [ ( architecture_name ) ] |
+           configuration [ library_name. ] configuration_name 
+Description:
+Each component instantiation refers to some design entity (entity/architecture pair) and
+the association is specified by a configuration specification. Component specification appears in the declarative part of the unit,
+where the instances are used.
+This way components can be configured within the architecture which instances them without using a separate configuration
+declaration.
+
+Configuration specifications are inflexible because changing the configuration requires editing the architecture
+containing the configuration. It is usually better to use separate configuration declarations.
+
+When the ports and generics in the component declaration are not equal to their counterparts in the
+entity declaration, one can use an explicit notification on how the ports and generics in the entity should
+be bound to ports and generics of the component instance. The generic map and port map are used for this purpose.
+
+Example:
+architecture Structure of MicroProcessor is
+  component ALU port (...); end component; 
+  component MUX port (...); end component; 
+  component LATCH port (...); end component; 
+
+  for A1: ALU use configuration TTL.SN74LS181
+    port map (Clk, Rst, A1, A2, Q);
+  for M1, M2, M3: MUX use entity Multiplex4(behavior);
+  for all: LATCH use entity Work.Latch;
+
+begin 
+  A1: ALU port map(...); 
+  M1: MUX port map(...); 
+  M2: MUX port map(...); 
+  M3: MUX port map(...); 
+  L1: LTACH port map(...); 
+  L2: LATCH port map(...); 
+end Structure;
+=========================================================================================================================
+5-Component
+
+LRM §4.5.
+A component declaration declares a virtual design entity interface that may be used in the component instantiation statement.
+
+Syntax:
+component component_name [ is ] 
+  [ generic ( generic_list ); ] 
+  [ port ( port_list ); ] 
+end component [ component_name ]; 
+Description:
+A component represents an entity/architecture pair.
+It specifies a subsystem, which can be instantiated in another architecture leading to a hierarchical specification.
+Component instantiation is analogous to a chip in a socket in a board.
+
+A component must be declared before it is instantiated.
+
+The binding of a design entity to a given component may be delayed and may be placed either in the configuration specification
+or configuration declaration.
+For default configuration, the component name must match the name of the corresponding entity to be used in its place,
+and the entity name must be visible.
+Also generics and ports must match in name, mode and type.
+
+The component can be defined in a package, design entity, architecture, or block declaration.
+If the component is declared in an architecture, it must be declared before the begin statement of the architecture.
+In such a case, the component can be used (instantiated) in the architecture only.
+
+If  a component is declared in a package, then such a component is visible in any architecture, which uses this package.
+
+Example:
+component Counter is
+  generic(N: integer); 
+  port(Clk, Rst, En: in std_logic; 
+       Q: out std_logic_vector(N-1 downto 0)); 
+end component;
+=========================================================================================================================
+6- Generic
+
+LRM §1.1.1.1.
+A channel for static information to be communicated to a block from its environment.
+
+Syntax:
+generic ( generic_name, ... : data_type [ := expression ] );
+Description:
+A generic is used to parameterize a design entity. They support static information to blocks in a similar way as constants,
+but unlike constants the values of generics can be supplied externally.
+Different instances of the same design entity can have different values for the generic parameters.
+Generics are given values in the generic map of an instance.
+
+Values supported by generics declared in an entity can be read either in the entity or in the associated architectures.
+
+The generics of an entity must be duplicated in the corresponding component,
+to allow instances of the component to be configured implicitly via the default rules.
+
+Example:
+generic (BusWidth: integer := 16;
+         Length, Size: positive);
+ =========================================================================================================================
+7- Port
+
+LRM §1.1.1.2.
+A channel for dynamic communication between a block and its environment.
+
+Syntax:
+port ( port_name, ... : [ mode ] data_type [ := Expression ] );
+
+mode = in | out | inout | buffer | linkage
+Description:
+A port represents a pin or a related group of pins on a hardware component.
+
+A port is, technically, a signal.
+
+The five different modes have the following definitions:
+
+in input port. This port can only be read. It is not allowed to assign a value to it.
+out output port. This port can only be assigned. It is not allowed to read from it.
+inout bi-directional port. Both assignments to such a port and reading from it are allowed.
+buffer output port with read capability. It differs from inout in that it can be updated by at most one source,
+whereas inout can be updated by zero or more sources.
+linkage. The value of the port may be read or updated, 
+but only by appearing as an actual corresponding to an interface object of mode linkage.
+Example:
+port (Clk, Rst: in std_logic;
+      D: in std_logic_vector(3 downto 0);
+      Status: out std_logic;
+      Q: buffer std_logic_vector(3 downto 0);
+=========================================================================================================================
+8-Generic map
+
+LRM §4.3.2.2, §5.2.1.2.
+A generic map associates values with the formal generics fo a block
+
+Syntax:
+generic map ( [ generic_name => ] expression, ... )
+Description:
+A generic map gives the value to a generic. Usually given in an instance but can also appear in a configuration.
+The values can be given via positional association or via named association.
+
+Use of named association is advised to improve readability and reduce the risk of making errors.
+
+Example:
+architecture Structure of Top is 
+  component CompA 
+    generic (TPLH, TPHL: TIME := 0 ns); 
+    port (...);
+  end component; 
+begin 
+  u1: CompA generic map (1.9 ns, 2.8 ns)
+            port map (...);
+  u2: CompA generic map (TPLH => 2 ns, TPHL => Top_Tphl) 
+            port map (...); 
+end Structure;
+=========================================================================================================================
+9-Port map
+
+LRM §4.3.2.2, §5.2.1.2.
+A port map is used to define the interconnection between instances.
+
+Syntax:
+port map ( [ port_name => ] expression, ... )
+Description:
+A port map maps signals in an architecture to ports on an instance within that architecture.
+Port maps can also appear in a block or in a configuration.
+
+The connections can be listed via positional association or via named association.
+
+Within an instance, the port names are ports on the component or entity being instanced,
+the expressions are signals visible in the architecture containing the instance.
+Within a configuration, the port names are ports on the entity, the expressions are ports on the component.
+
+The elements of an array port can be connected individually when using named association.
+
+Ports may be left unconnected using the keyword open.
+
+Example:
+architecture Structure of Top is
+  component CompA
+    generic (...);
+    port (Clk, Rst: in std_logic;
+          D: in std_logic_vector(3 downto 0);
+          Rd : out std_logic;
+          Q: out std_logic_vector(3 downto 0));
+  end component;
+begin
+  u1: CompA generic map(...)
+            port map(Clock, Reset, DIn, QOut);
+  u2: CompA generic map(...)
+            port map(Clk => Clock,
+                     Rst => Reset,
+                     D => DIn,
+                     Rd => open,
+                     Q(0) => QOut1,
+                     Q(3 downto 1) => QOut2);
+end Structure;
