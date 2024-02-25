@@ -5,28 +5,39 @@
 library ieee ;
     use ieee.std_logic_1164.all ;
     use ieee.std_logic_arith.all;
-    use ieee.std_logic_unsiged.all;
+    use ieee.std_logic_unsigned.all;
 
-entity Contador_ is
+entity Generador_5hz is
   port (
-    clk,rst,d : in std_logic;
-    q: out std_logic;
+    clk,rst : in std_logic;
+    q: out std_logic
   ) ;
-end Contador_ ; 
+end Generador_5hz ; 
 
-architecture Contadorarch of Contador_ is
+architecture Contadorarch of Generador_5hz is
+    signal sq: std_logic:='0';
     signal counter: integer range 0 to 24999999:=0;  --Contador para generar la frecuencia deseada Clk/2
+    signal rr : integer range 0 to 1:=0;
 begin
     process (clk,rst) is
         begin
-        if rst = '1' then
+         if rst = '1' then
             counter <= 0;
-            q <= '0';
-        elsif clk'event and clk = '1' and counter = 24999999 then
-            counter <= '0';
-            q <= not q;
+            sq <= '0';
+        elsif clk'event and clk = '1' then
+            if counter = 24999999 then
+                if rr = 1 then
+                    counter <= '0';
+                    rr <= 0;
+                    sq <= not sq;
+                else 
+                    counter <= 0;
+                    rr <= rr+1;
+                end if;
         else
             counter <= counter + 1;
+            end if;
         end if;
     end process;--Generador_.5Hz:
+    q <= sq;
 end Contadorarch ;
