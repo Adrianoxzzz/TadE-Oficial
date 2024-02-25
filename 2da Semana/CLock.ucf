@@ -1,0 +1,4 @@
+NET "clk" LOC = "C9" | IOSTANDARD = LVCMOS33 ;
+NET "clk" PERIOD = 20.0ns HIGH 40%;
+NET "rst" LOC = "L13" | IOSTANDARD = LVTTL | PULLUP ;
+NET "q" LOC = "D4” | IOSTANDARD = SSTL2_I ; 
