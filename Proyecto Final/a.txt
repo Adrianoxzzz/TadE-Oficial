@@ -1,0 +1,6 @@
+http://www.sc.ehu.es/sbweb/webcentro/automatica/web_avr/archivos/Manual_AT90S8515/SPI/principal_spi.htm
+https://cursos.mcielectronics.cl/2022/08/23/serial-peripheral-interface-spi/ 
+https://github.com/Mekky7/design-of-spi-protocol-and-implementing-on-fpga-and-generate-bitstream-file
+ttps://blog.csdn.net/qq_54347584/article/details/133864982?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-1-133864982-blog-132217922.235^v43^control&spm=1001.2101.3001.4242.2&utm_relevant_index=4
+https://media-www.micron.com/-/media/client/global/documents/products/data-sheet/nor-flash/serial-nor/m25pe_m45pe/m25pe16.pdf?rev=f3b58c3c4d4b45d78c9b4fe58748d9a0
+https://github.com/jakubcabal/spi-fpga
