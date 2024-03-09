@@ -1,0 +1,4 @@
+v 4
+file . "Registers_Counters.vhdl" "5465967f30ef73f2568eb4905cf608e16fb53fa6" "20240309161533.562":
+  entity reg_count at 1( 0) + 0 on 21;
+  architecture arch of reg_count at 13( 222) + 0 on 22;

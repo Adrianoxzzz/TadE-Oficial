@@ -5,20 +5,20 @@ library ieee ;
 entity FMS_Video is
   port (
     clk,rst,Sm,Sf : in std_logic;
-    E,F,A : out std_logic
+    E,P,A : out std_logic
   ) ;
 end FMS_Video ; 
 
 architecture FMS_VideoArch of FMS_Video is
   type state is (espera,encender_E,apagar_E,abrir_P,alarma);
-  signal D_bus , Q_bus : state := "000";
+  signal D_bus , Q_bus : state :=  espera;
   signal salidas: std_logic_vector (2 downto 0):=(others => '0');
 begin
 Activacion : process( clk,rst )
 begin
-  if clk'event and ck = '1' then
+  if clk'event and clk = '1' then
     if rst = '1' then
-        Q_bus <= "000";
+        Q_bus <= espera;
     else 
         Q_bus <= D_bus;
     end if;
@@ -30,15 +30,15 @@ end process ; -- Activacion
     case( Q_bus ) is
     
       when espera =>
-        if (Sm and Sf = '1') then
+        if (Sm and Sf) = '1' then
           D_bus <= encender_E;
           else
             D_bus <= espera;
         end if ;
       when encender_E =>
-          if (SM and Sf = '1') then
+          if (SM and Sf) = '1' then
             D_bus <= encender_E;
-            elsif (Sm and (not Sf) = '1') then
+            elsif (Sm and (not Sf)) = '1' then
               D_bus <= Apagar_E;
               else
                 D_bus <= alarma;
@@ -46,7 +46,7 @@ end process ; -- Activacion
       when apagar_E =>
               if (Sf = '1') then
                 D_bus <= alarma;
-                elsif (Sm and (not Sf) = '1') then
+                elsif (Sm and (not Sf)) = '1' then
                   D_bus <= apagar_E;
                   else
                     D_bus <=abrir_P;
