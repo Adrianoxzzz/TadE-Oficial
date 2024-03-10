@@ -62,11 +62,15 @@ begin
     when Di_MSB =>
         if CS = '0' and WriteC = '0' then
             D_bus <= Di_MeSB;
+        elsif CS = '0' and ReadC = '0' then
+            D_bus <= Di_MeSB;
         else
             D_bus <= espera;
         end if;
     when Di_MeSB =>
         if CS = '0' and WriteC = '0' then
+            D_bus <= Di_LSB;
+        elsif CS = '0' and ReadC = '0' then
             D_bus <= Di_LSB;
         else
             D_bus <= espera;
@@ -74,12 +78,20 @@ begin
     when Di_LSB =>
         if CS = '0' and WriteC = '0' then
             D_bus <= data;
+        elsif CS = '0' and ReadC = '0' then
+            D_bus <= espera;
         else
             D_bus <= espera;
         end if;
     when data =>
         if CS = '0' and WriteC = '0' then
             D_bus <= data;
+        else
+            D_bus <= espera;
+        end if;
+    when RDB =>
+        if CS ='0' and ReadC ='0' then
+            D_bus <= Di_MSB;
         else
             D_bus <= espera;
         end if;
@@ -98,6 +110,7 @@ with Q_bus select
                    bdir(7 downto 0) when Di_LSB,
                    databus when data,
                    "00000000" when espera,
+                   "00000011" when RDB,
                    "00000000" when others;
 data_out <=DOut;
 end architecture ;
