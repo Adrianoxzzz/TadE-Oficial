@@ -7,7 +7,6 @@ entity FMS is
     clk: in std_logic;
     CS: in std_logic;
     rst: in std_logic;
-    data_in:in std_logic_vector(7 downto 0);
     data_out: out std_logic_vector(7 downto 0);
     bdir: in std_logic_vector(23 downto 0);
     databus: in std_logic_vector(7 downto 0);
@@ -34,64 +33,64 @@ begin
 end process ; -- Inicializar
 
 -----------NEXT STATE LOGIC-----------
-FMS : process( Q_bus,WriteC,ReadC,CS)
+FMScode : process( Q_bus,WriteC,ReadC,CS)
 begin
    case( Q_bus ) is
    
     when espera =>
         if CS ='0' then
             if WriteC = '0' then
-                Q_bus <= WE;
+                D_bus <= WE;
             elsif ReadC = '0' then
-                Q_bus <= RDB;
+                D_bus <= RDB;
             end if;
         else 
-            Q_bus <= espera;
+            D_bus <= espera;
         end if;
     when WE =>
         if CS ='0' and WriteC ='0' then
-            Q_bus <= PP;
+            D_bus <= PP;
         else 
-            Q_bus <= espera;
+            D_bus <= espera;
         end if;
     when PP =>
         if CS = '0' and WriteC = '0' then
-            Q_bus <= Di_MSB;
+            D_bus <= Di_MSB;
         else
-            Q_bus <= espera;
+            D_bus <= espera;
         end if;
     when Di_MSB =>
         if CS = '0' and WriteC = '0' then
-            Q_bus <= Di_MeSB;
+            D_bus <= Di_MeSB;
         else
-            Q_bus <= espera;
+            D_bus <= espera;
         end if;
     when Di_MeSB =>
         if CS = '0' and WriteC = '0' then
-            Q_bus <= Di_LSB;
+            D_bus <= Di_LSB;
         else
-            Q_bus <= espera;
+            D_bus <= espera;
         end if;
     when Di_LSB =>
         if CS = '0' and WriteC = '0' then
-            Q_bus <= data;
+            D_bus <= data;
         else
-            Q_bus <= espera;
+            D_bus <= espera;
         end if;
     when data =>
         if CS = '0' and WriteC = '0' then
-            Q_bus <= data;
+            D_bus <= data;
         else
-            Q_bus <= espera;
+            D_bus <= espera;
         end if;
     when others =>
-            Q_bus <= espera;
+            D_bus <= espera;
    end case ; 
-end process ; -- FMS
+end process ; -- FMScode
 
 ------Present State Logic----------
 with Q_bus select
-           Dout  <= "00000110" when WE,
+           DOut  <= "00000110" when WE,
                    "00000010" when PP,
                    "00000100" when WD,
                    bdir(23 downto 16) when Di_MSB,
@@ -100,5 +99,5 @@ with Q_bus select
                    databus when data,
                    "00000000" when espera,
                    "00000000" when others;
-data_out <=Dout;
+data_out <=DOut;
 end architecture ;

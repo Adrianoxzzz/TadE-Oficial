@@ -11,7 +11,6 @@ port(
     clk: in std_logic;
     CS: in std_logic;
     rst: in std_logic;
-    data_in:in std_logic_vector(7 downto 0);
     data_out: out std_logic_vector(7 downto 0);
     bdir: in std_logic_vector(23 downto 0);
     databus: in std_logic_vector(7 downto 0);
@@ -23,18 +22,18 @@ end component;
 signal clk: std_logic := '0';
 signal CS: std_logic:='0';
 signal rst: std_logic:='0';
-signal data_in:std_logic_vector(7 downto 0):=(others => '0');
+signal bdir: std_logic_vector(23 downto 0):="001001110111010010100010";
+signal databus: std_logic_vector(7 downto 0):="00111110";
+signal WriteC: std_logic:='0';
+signal ReadC: std_logic :='0';
+--output
 signal data_out: std_logic_vector(7 downto 0);
-signal bdir: std_logic_vector(23 downto 0):="100111010011110010111110";
-signal databus: std_logic_vector(7 downto 0):="01010111";
-signal WriteC,ReadC:std_logic;
 constant clk_period : time:= 10 ns;
 begin
     uut: FMS port map (
         clk => clk,
         CS => CS,
-        rst =>rst,
-        data_in =>data_in,
+        rst => rst,
         WriteC =>WriteC,
         ReadC => ReadC,
         bdir =>bdir,
@@ -90,13 +89,14 @@ begin
     WriteC <='0';
     ReadC <= '1';
     wait for clk_period*4;
-    CS <='0';
+    CS <='1';
     WriteC <='0';
     ReadC <= '1';
     wait for clk_period*4;
-    CS <='0';
+    CS <='1';
     WriteC <='0';
     ReadC <= '1';
     wait for clk_period*4;
+    wait;
 end process ; -- stim_process
 end architecture ;
