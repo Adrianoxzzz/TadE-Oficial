@@ -1,0 +1,4 @@
+v 4
+file . "counter.vhdl" "ca83cc1db7f29761d1b291ecb19291720db3ab67" "20240317011005.071":
+  entity gencounter at 1( 0) + 0 on 13;
+  architecture counterarch of gencounter at 20( 370) + 0 on 14;
