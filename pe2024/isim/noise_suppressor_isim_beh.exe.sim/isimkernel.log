@@ -1,0 +1,28 @@
+Command line:
+   noise_suppressor_isim_beh.exe
+     -simmode  gui
+     -simrunnum  0
+     -socket  45151
+
+Tue Mar 19 14:32:30 2024
+
+
+ Elaboration Time: 0.08 sec
+
+ Current Memory Usage: 217.367 Meg
+
+ Total Signals          : 20
+ Total Nets             : 31
+ Total Signal Drivers   : 10
+ Total Blocks           : 5
+ Total Primitive Blocks : 4
+ Total Processes        : 8
+ Total Traceable Variables  : 45
+ Total Scalar Nets and Variables : 644
+
+ Total Simulation Time: 0.09 sec
+
+ Current Memory Usage: 294.965 Meg
+
+Tue Mar 19 14:32:37 2024
+

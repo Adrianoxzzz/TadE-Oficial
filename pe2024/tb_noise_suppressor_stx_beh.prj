@@ -1,0 +1,3 @@
+vhdl isim_temp "counter.vhd"
+vhdl isim_temp "../../src/noise_suppressor.vhd"
+vhdl isim_temp "noise_suppressor.vhd"

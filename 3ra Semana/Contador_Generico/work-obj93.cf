@@ -1,0 +1,4 @@
+v 4
+file . "Contador_Generico.vhdl" "3c184bc435e9e1623c0bd7e63952da848f9c687f" "20240319033603.801":
+  entity contador_generico at 1( 0) + 0 on 11;
+  architecture contador_genericoarch of contador_generico at 20( 463) + 0 on 12;

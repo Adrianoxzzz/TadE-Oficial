@@ -1,0 +1,8 @@
+V3 3
+FL "/home/ise/AdrianoSpinola/PE - 2024/pro/pe2024/counter.vhd" 2024/03/19.14:42:49 P.20131013
+EN work/counter 1710859375 \
+      FL "/home/ise/AdrianoSpinola/PE - 2024/pro/pe2024/counter.vhd" \
+      PB ieee/std_logic_1164 1381692176 PB ieee/NUMERIC_STD 1381692181
+AR work/counter/Contador_GenericoArch 1710859376 \
+      FL "/home/ise/AdrianoSpinola/PE - 2024/pro/pe2024/counter.vhd" \
+      EN work/counter 1710859375

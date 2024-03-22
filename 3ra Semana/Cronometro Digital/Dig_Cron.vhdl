@@ -124,3 +124,4 @@ port map(
 	Q => Qqout(4)
 );	
 end architecture ;
+

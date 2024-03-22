@@ -1,0 +1,1 @@
+-intstyle "ise" -incremental -o "/home/ise/AdrianoSpinola/PE - 2024/pro/pe2024/tb_noise_suppressor_isim_beh.exe" -prj "/home/ise/AdrianoSpinola/PE - 2024/pro/pe2024/tb_noise_suppressor_beh.prj" "work.tb_noise_suppressor" 

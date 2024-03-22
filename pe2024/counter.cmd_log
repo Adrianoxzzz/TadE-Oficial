@@ -1,0 +1,4 @@
+vhdtdtfi -prj pe2024 -o "/home/ise/AdrianoSpinola/PE - 2024/pro/pe2024/counter.vhi" -module counter -template /opt/Xilinx/14.7/ISE_DS/ISE//data/vhdlinst.tft -deleteonerror -lib work counter.vhd 
+xst -intstyle ise -ifn "/home/ise/AdrianoSpinola/PE - 2024/pro/pe2024/counter.xst" -ofn "/home/ise/AdrianoSpinola/PE - 2024/pro/pe2024/counter.syr" 
+xst -intstyle ise -ifn "/home/ise/AdrianoSpinola/PE - 2024/pro/pe2024/counter.xst" -ofn "/home/ise/AdrianoSpinola/PE - 2024/pro/pe2024/counter.syr" 
+xst -intstyle ise -ifn "/home/ise/AdrianoSpinola/PE - 2024/pro/pe2024/counter.xst" -ofn "/home/ise/AdrianoSpinola/PE - 2024/pro/pe2024/counter.syr" 
