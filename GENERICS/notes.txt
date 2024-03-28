@@ -1,0 +1,40 @@
+NOTA: Para todas las funciones que se emplearan se necesita incluir la libreria
+use ieee.numeric_std.all
+Ver https://redirect.cs.umbc.edu/portal/help/VHDL/numeric_std.vhdl
+
+hacer testbench con ciclo for:
+
+---En este caso se esta dando valores a una entrada x que es un std_logic vector
+--- de 3 bits desde 000 hasta 111
+---Luego se realiza un assert para comprobar si la salida es la correcta
+---La salida es un std_logic_vector de 8 bits que posee un 1 en la posicion correspondiente
+---a la i que se esta trabajando en ese momento
+---ejemplo: si i=0 y= "00000001"
+for i in 0 to n loop
+    x <= std_logic_vector(to_unsigned(i,3));
+
+--- En esta linea se asigna el valor actual de cada iteracion a la entrada x
+--- como x es de tipo std_logic_vector y i es de tipo entero se necesita hacer una conversion
+---la funcion to unsigned convierte un valor a tipo entero sin signo, esto es obligatorio para convertir a std_logic_vector
+--- Los parametros que lleva esta funcion son (variable a convertir, numero de bits de salida)
+
+    wait for 1 ns;
+    assert to_integer(unsigned(y)) = 2**i
+            report "No activa la salida " & integer'image(i) & "con la correspondiente entrada"
+            severity failure;
+    end loop;
+
+    ---Explicacion linea a linea----
+---la funcion assert comprobara para cada iteracion si la igualdad que se le asigna es correcta, en caso de serla continua el programa, si no
+---activa la señal de report.
+---Ya que la salida es de tipo std_logic_vector se necesita convertir esta a tipo entero para que pueda ser comparada con la iteracion en curso
+---Por tanto se emplea primeramente la funcion unsigned() la cual define el parametro a tipo unsigned
+---Luego la funcion to integer tiene la siguiente estructura
+function TO_INTEGER (ARG: UNSIGNED) return NATURAL;
+  -- Result: Convierte el UNSIGNED vector a un INTEGER.
+---Como se observa se necesita sea de tipo UNSIGNED el parametro
+
+--- Luego en el report lo que se necesita recalcar es:
+--- operador & funciona para concatenar algo, en este caso estamos concatenando 3 partes la primera y ultima corresponden a textos
+--- la segunda parte es debido a que si colocamos "No activa la salida i con la correspondiente entrada" 
+--- La i sera detectada como un caracter y no como una variable, por ende se coloca el comando integer'image('variable') para que lo entienda como entero.
